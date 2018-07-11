@@ -16,7 +16,7 @@
     "description": "Error message displayed when `levelOfControl` is 'not_controllable'."
   },
   "errorOtherExtensionControls": {
-    "message": "Sorry. This browser's proxy settings are being controlled by another extension. Please visit chrome://extensions for details.",
+    "message": "Sorry. This browser's proxy settings are being controlled by another extension. Please visit browser://extensions for details.",
     "description": "Error message displayed when `levelOfControl` is 'controlled_by_other_extensions'."
   },
   "errorSettingRegularProxy": {

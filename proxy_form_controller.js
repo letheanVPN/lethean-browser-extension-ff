@@ -4,9 +4,9 @@ var ProxyFormController = function(id) {
 
   // Throw an error if the element either doesn't exist, or isn't a form.
   if (!this.form_)
-    throw chrome.i18n.getMessage('errorIdNotFound', id);
+    throw browser.i18n.getMessage('errorIdNotFound', id);
   else if (this.form_.nodeName !== 'FORM')
-    throw chrome.i18n.getMessage('errorIdNotForm', id);
+    throw browser.i18n.getMessage('errorIdNotForm', id);
 
   /**
    * Cached references to the `fieldset` groups that define the configuration
@@ -47,7 +47,7 @@ ProxyFormController.WindowTypes = {
 };
 
 /**
- * The extension's level of control of Chrome's roxy setting
+ * The extension's level of control of browser's roxy setting
  * @enum {string}
  */
 ProxyFormController.LevelOfControl = {
@@ -130,7 +130,7 @@ ProxyFormController.prototype = {
 
 
   /**
-   * @see http://code.google.com/chrome/extensions/trunk/proxy.html
+   * @see http://code.google.com/browser/extensions/trunk/proxy.html
    * @return {?ProxyServer} An object containing the proxy server host, port,
    *     and scheme. If null, there is no single proxy.
    */
@@ -143,7 +143,7 @@ ProxyFormController.prototype = {
 
 
   /**
-   * @see http://code.google.com/chrome/extensions/trunk/proxy.html
+   * @see http://code.google.com/browser/extensions/trunk/proxy.html
    * @param {?ProxyServer} data An object containing the proxy server host,
    *     port, and scheme. If null, the single proxy checkbox will be unchecked.
    */
@@ -240,7 +240,7 @@ ProxyFormController.prototype = {
   /**
    * A generic mechanism for setting proxy data.
    *
-   * @see http://code.google.com/chrome/extensions/trunk/proxy.html
+   * @see http://code.google.com/browser/extensions/trunk/proxy.html
    * @param {string} type The type of proxy that's being set ("Http",
    *     "Https", etc.).
    * @param {?ProxyServer} data An object containing the proxy server host,
@@ -265,12 +265,12 @@ ProxyFormController.prototype = {
    * @private
    */
   readCurrentState_: function() {
-    chrome.extension.isAllowedIncognitoAccess(
+    browser.extension.isAllowedIncognitoAccess(
         this.handleIncognitoAccessResponse_.bind(this));
   },
 
   /**
-   * Handles the respnse from `chrome.extension.isAllowedIncognitoAccess`
+   * Handles the respnse from `browser.extension.isAllowedIncognitoAccess`
    * We can't render the form until we know what our access level is, so
    * we wait until we have confirmed incognito access levels before
    * asking for the proxy state.
@@ -280,10 +280,10 @@ ProxyFormController.prototype = {
    */
   handleIncognitoAccessResponse_: function(state) {
     this.isAllowedIncognitoAccess_ = state;
-    chrome.proxy.settings.get({incognito: false},
+    browser.proxy.settings.get({incognito: false},
         this.handleRegularState_.bind(this));
     if (this.isAllowedIncognitoAccess_) {
-      chrome.proxy.settings.get({incognito: true},
+      browser.proxy.settings.get({incognito: true},
           this.handleIncognitoState_.bind(this));
     }
   },
@@ -446,10 +446,10 @@ ProxyFormController.prototype = {
     else
       this.config_.regular = this.generateProxyConfig_();
 
-    chrome.proxy.settings.set(
+    browser.proxy.settings.set(
         {value: this.config_.regular, scope: 'regular'},
         this.callbackForRegularSettings_.bind(this));
-    chrome.extension.sendRequest({type: 'clearError'});
+    browser.extension.sendRequest({type: 'clearError'});
   },
 
   /**
@@ -459,8 +459,8 @@ ProxyFormController.prototype = {
    * @private
    */
   callbackForRegularSettings_: function() {
-    if (chrome.runtime.lastError) {
-      this.generateAlert_(chrome.i18n.getMessage('errorSettingRegularProxy'), true);
+    if (browser.runtime.lastError) {
+      this.generateAlert_(browser.i18n.getMessage('errorSettingRegularProxy'), true);
 	  
 	  // trigger click on disconnect button
 	  $("#proxyTypeSystem").click();
@@ -468,7 +468,7 @@ ProxyFormController.prototype = {
       return;
     }
     if (this.config_.incognito) {
-      chrome.proxy.settings.set(
+      browser.proxy.settings.set(
           {value: this.config_.incognito, scope: 'incognito_persistent'},
           this.callbackForIncognitoSettings_.bind(this));
     } else {
@@ -483,8 +483,8 @@ ProxyFormController.prototype = {
    * @private
    */
   callbackForIncognitoSettings_: function() {
-    if (chrome.runtime.lastError) {
-      this.generateAlert_(chrome.i18n.getMessage('errorSettingIncognitoProxy'));
+    if (browser.runtime.lastError) {
+      this.generateAlert_(browser.i18n.getMessage('errorSettingIncognitoProxy'));
       return;
     }
     ProxyFormController.setPersistedSettings(this.config_);
@@ -530,7 +530,7 @@ ProxyFormController.prototype = {
    * Parses the proxy configuration form, and generates a ProxyConfig object
    * that can be passed to `useCustomProxyConfig`.
    *
-   * @see http://code.google.com/chrome/extensions/trunk/proxy.html
+   * @see http://code.google.com/browser/extensions/trunk/proxy.html
    * @return {ProxyConfig} The proxy configuration represented by the form.
    * @private
    */
@@ -596,7 +596,7 @@ ProxyFormController.prototype = {
       var msg = "I'm sorry, Dave, I'm afraid I can't do that. Give me access " +
                 "to Incognito settings by checking the checkbox labeled " +
                 "'Allow in Incognito mode', which is visible at " +
-                "chrome://extensions.";
+                "browser://extensions.";
       this.generateAlert_(msg, false);
       return;
     }
@@ -658,9 +658,9 @@ ProxyFormController.prototype = {
   handleLackOfControl_: function(l) {
     var msg;
     if (l === ProxyFormController.LevelOfControl.NO_ACCESS)
-      msg = chrome.i18n.getMessage('errorNoExtensionAccess');
+      msg = browser.i18n.getMessage('errorNoExtensionAccess');
     else if (l === ProxyFormController.LevelOfControl.OTHER_EXTENSION)
-      msg = chrome.i18n.getMessage('errorOtherExtensionControls');
+      msg = browser.i18n.getMessage('errorOtherExtensionControls');
     this.generateAlert_(msg);
   },
 
@@ -672,7 +672,7 @@ ProxyFormController.prototype = {
    * @private
    */
   handleProxyErrors_: function() {
-    chrome.extension.sendRequest(
+    browser.extension.sendRequest(
         {type: 'getError'},
         this.handleProxyErrorHandlerResponse_.bind(this));
   },
@@ -687,7 +687,7 @@ ProxyFormController.prototype = {
     if (response.result !== null) {
       var error = JSON.parse(response.result);
       this.generateAlert_(
-          chrome.i18n.getMessage(
+          browser.i18n.getMessage(
               error.details ? 'errorProxyDetailedError' : 'errorProxyError',
               [error.error, error.details]),
           false);

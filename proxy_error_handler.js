@@ -21,10 +21,10 @@
 
 function ProxyErrorHandler() {
   // Handle proxy error events.
-  chrome.proxy.onProxyError.addListener(this.handleError_.bind(this));
+  browser.proxy.onProxyError.addListener(this.handleError_.bind(this));
 
   // Handle message events from popup.
-  chrome.extension.onRequest.addListener(this.handleOnRequest_.bind(this));
+  browser.extension.onRequest.addListener(this.handleOnRequest_.bind(this));
   
 };
 
@@ -76,10 +76,10 @@ ProxyErrorHandler.prototype = {
 
     // Badge the popup icon.
     var color = details.fatal ? RED : YELLOW;
-    chrome.browserAction.setBadgeBackgroundColor({color: color});
-    chrome.browserAction.setBadgeText({text: 'X'});
-    chrome.browserAction.setTitle({
-      title: chrome.i18n.getMessage('errorPopupTitle', details.error)
+    browser.browserAction.setBadgeBackgroundColor({color: color});
+    browser.browserAction.setBadgeText({text: 'X'});
+    browser.browserAction.setTitle({
+      title: browser.i18n.getMessage('errorPopupTitle', details.error)
     });
 
     // Store the error for display in the popup.
@@ -101,16 +101,16 @@ ProxyErrorHandler.prototype = {
    * Clears last handled error.
    */
   clearErrorDetails: function() {
-    chrome.browserAction.setBadgeText({text: ''});
-    chrome.browserAction.setTitle({
-        title: chrome.i18n.getMessage('extDescription')
+    browser.browserAction.setBadgeText({text: ''});
+    browser.browserAction.setTitle({
+        title: browser.i18n.getMessage('extDescription')
       });
     if(window.localStorage['proxyConfig'][20] == "f"){
       var GREEN = [124, 252, 0, 255];
-      chrome.browserAction.setBadgeText({text: '0'});
-      chrome.browserAction.setBadgeBackgroundColor({color: GREEN});
-      chrome.browserAction.setTitle({
-        title: chrome.i18n.getMessage('connectedPopupTitle')
+      browser.browserAction.setBadgeText({text: 'o'});
+      browser.browserAction.setBadgeBackgroundColor({color: GREEN});
+      browser.browserAction.setTitle({
+        title: browser.i18n.getMessage('connectedPopupTitle')
       });
     }
     this.lastError_ = null;

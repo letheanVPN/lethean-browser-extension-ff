@@ -17,7 +17,7 @@ document.addEventListener("DOMContentLoaded", function () {
   // incognito settings are wiped on restart.
   var persistedSettings = ProxyFormController.getPersistedSettings();
   if (persistedSettings !== null) {
-    chrome.proxy.settings.set(
+    browser.proxy.settings.set(
         {'value': persistedSettings.regular});
   }
 });
