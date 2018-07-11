@@ -18,14 +18,12 @@
  * @constructor
  */
 
-
 function ProxyErrorHandler() {
   // Handle proxy error events.
   browser.proxy.onProxyError.addListener(this.handleError_.bind(this));
 
   // Handle message events from popup.
   browser.extension.onRequest.addListener(this.handleOnRequest_.bind(this));
-  
 };
 
 ///////////////////////////////////////////////////////////////////////////////

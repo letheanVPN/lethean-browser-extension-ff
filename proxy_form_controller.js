@@ -25,7 +25,6 @@ var ProxyFormController = function(id) {
 };
 
 
-///////////////////////////////////////////////////////////////////////////////
 
 /**
  * The proxy types we're capable of handling.
@@ -47,7 +46,6 @@ ProxyFormController.WindowTypes = {
 };
 
 /**
- * The extension's level of control of browser's roxy setting
  * @enum {string}
  */
 ProxyFormController.LevelOfControl = {
@@ -135,18 +133,9 @@ ProxyFormController.prototype = {
    *     and scheme. If null, there is no single proxy.
    */
   get singleProxy() {
-    //document.getElementById('singleProxyForEverything').checked = true;
-    //var checkbox = document.getElementById('singleProxyForEverything');
     return this.httpProxy
-    //return checkbox.checked ? this.httpProxy : null;
   },
 
-
-  /**
-   * @see http://code.google.com/browser/extensions/trunk/proxy.html
-   * @param {?ProxyServer} data An object containing the proxy server host,
-   *     port, and scheme. If null, the single proxy checkbox will be unchecked.
-   */
 
   /**
    * @return {?ProxyServer} An object containing the proxy server host, port
@@ -240,7 +229,6 @@ ProxyFormController.prototype = {
   /**
    * A generic mechanism for setting proxy data.
    *
-   * @see http://code.google.com/browser/extensions/trunk/proxy.html
    * @param {string} type The type of proxy that's being set ("Http",
    *     "Https", etc.).
    * @param {?ProxyServer} data An object containing the proxy server host,
@@ -347,8 +335,6 @@ ProxyFormController.prototype = {
    */
   dispatchFormClick_: function(e) {
     var t = e.target;
-	
-	console.log('dispatchFormClick_ ' + t);
     
     // Case 1: "Apply"
     if (t.nodeName === 'INPUT' && t.getAttribute('type') === 'submit') {
@@ -412,8 +398,6 @@ ProxyFormController.prototype = {
       if (el.classList.contains('active')) {
         for (j = 0; j < inputs.length; j++) {
           inputs[j].removeAttribute('disabled');
-          console.log(inputs[j].id)
-          
         }
       } else {
         for (j = 0; j < inputs.length; j++) {
@@ -449,7 +433,7 @@ ProxyFormController.prototype = {
     browser.proxy.settings.set(
         {value: this.config_.regular, scope: 'regular'},
         this.callbackForRegularSettings_.bind(this));
-    browser.extension.sendRequest({type: 'clearError'});
+    browser.runtime.sendMessage({type: 'clearError'});
   },
 
   /**
@@ -462,8 +446,8 @@ ProxyFormController.prototype = {
     if (browser.runtime.lastError) {
       this.generateAlert_(browser.i18n.getMessage('errorSettingRegularProxy'), true);
 	  
-	  // trigger click on disconnect button
-	  $("#proxyTypeSystem").click();
+	     // trigger click on disconnect button
+	     $("#proxyTypeSystem").click();
       
       return;
     }
@@ -502,7 +486,6 @@ ProxyFormController.prototype = {
 	// delete all existing and opened alerts
 	$('.overlay').remove();
 
-	  
     var success = document.createElement('div');
     if(close == true){
       success.classList.add('overlay');
@@ -515,7 +498,6 @@ ProxyFormController.prototype = {
     document.body.appendChild(success);
 
     setTimeout(function() { success.classList.add('visible'); }, 10);
-
     setTimeout(function() {
         if(close == true){
           success.setAttribute('hidden', 'hidden');
@@ -530,7 +512,6 @@ ProxyFormController.prototype = {
    * Parses the proxy configuration form, and generates a ProxyConfig object
    * that can be passed to `useCustomProxyConfig`.
    *
-   * @see http://code.google.com/browser/extensions/trunk/proxy.html
    * @return {ProxyConfig} The proxy configuration represented by the form.
    * @private
    */
@@ -560,7 +541,6 @@ ProxyFormController.prototype = {
    */
   toggleSingleProxyConfig_: function(e) {
     var checkbox = e.target;
-
     checkbox.parentNode.parentNode.classList.add('single');
   },
 
@@ -624,15 +604,12 @@ ProxyFormController.prototype = {
    * @private
    */
   recalcFormValues_: function(c) {
-    
-    console.log("Mode " + c.mode);
     // Activate one of the groups, based on `mode`.
     this.changeActive_(document.getElementById(c.mode));
 
     // Evaluate the `rules`
     if (c.rules) {
       var rules = c.rules;
-      //if (rules.singleProxy) {
       this.singleProxy = rules.singleProxy;
       this.bypassList = rules.bypassList;
     } else {
@@ -672,7 +649,7 @@ ProxyFormController.prototype = {
    * @private
    */
   handleProxyErrors_: function() {
-    browser.extension.sendRequest(
+    browser.runtime.sendMessage(
         {type: 'getError'},
         this.handleProxyErrorHandlerResponse_.bind(this));
   },
