@@ -1,17 +1,10 @@
 $(document).ready(function() {
 
-	//let pStorage = browser.storage.local.get('proxyConfig')
-	//console.log(pStorage)
-
 	if(typeof(Storage) == "undefined"){
 		localStorage.proxyConfig = "system";
-		console.log("has support to Storage --------------------")
-	}else{
-		console.log("no suporte to Storage -----------------")
 	}
 
 	var pconfig = localStorage.getItem("proxyConfig")
-	console.log(pconfig + "---------- my storage")
 	if(pconfig == 'system'){
 		let proxySettings = {
 		  proxyType: "system"
@@ -19,19 +12,11 @@ $(document).ready(function() {
 
 		browser.proxy.settings.set({value: proxySettings})
 		localStorage.proxyConfig = "system";
-		/*
-		browser.storage.local.set({
-		  proxyConfig: {type:"system"}
-		});
-		*/
 		$("#system").attr("hidden", "hidden");
 		$("#fixed_servers").removeAttr("hidden");
 		$(".proxyFailMsg").removeClass('visible');
 		$(".proxyFailMsg").addClass('nonDisplay');
 		$("#settingsConfig").removeAttr("hidden");
-
-		console.log(proxySettings.proxyType + "--------------------------------1")
-		console.log(proxySettings.httpProxyAll + "--------------------------------1")
 
 		document.getElementById('proxyHostHttp').value = "localhost";
         document.getElementById('proxyPortHttp').value = "6666"
@@ -39,24 +24,23 @@ $(document).ready(function() {
 		$("#fixed_servers").attr("hidden", "hidden");
 		$("#system").removeAttr("hidden");
 		$("#settingsConfig").attr("hidden", "hidden");
+		/*
+		var host = document.getElementById('proxyHostHttp').value
+		var port = document.getElementById('proxyPortHttp').value
+		var local = ""
+		if(host.length > 0 && port.length >0){
+			local = host+":"+port
+		}
 		let proxySettings = {
 		  proxyType: "manual",
-		  http: "127.0.0.1:6666",
+		  http: local,
 		  socksVersion: 4,
 		  //passthrough: ".example.org"
 		  httpProxyAll: true
 		};
 		browser.proxy.settings.set({value: proxySettings})
-		/*
-		browser.storage.local.set({
-		  proxyConfig: {type:"manual"}
-		});
-		*/
 		localStorage.proxyConfig = "manual";
-		console.log(proxySettings.proxyType + "--------------------------------2")
-		console.log(proxySettings.httpProxyAll + "--------------------------------2")
-
-		
+		*/
 	}
 
 	$('input[id=proxyTypeSystem]').click(function() {
@@ -69,15 +53,9 @@ $(document).ready(function() {
 		  proxyType: "system"
 		};
 		browser.proxy.settings.set({value: proxySettings})
-		/*
-		browser.storage.local.set({
-		  proxyConfig: {type:"system"}
-		});
-		*/
 		localStorage.proxyConfig = "system";
-		console.log(proxySettings.proxyType + "--------------------------------3")
-		console.log(proxySettings.httpProxyAll + "--------------------------------3")
-
+		document.getElementById('proxyHostHttp').value = "localhost";
+        document.getElementById('proxyPortHttp').value = "6666"
 		
 	});
 	
@@ -85,25 +63,21 @@ $(document).ready(function() {
 		$("#fixed_servers").attr("hidden", "hidden");
 		$("#system").removeAttr("hidden");
 		$("#settingsConfig").attr("hidden", "hidden");
-		
+		var host = document.getElementById('proxyHostHttp').value
+		var port = document.getElementById('proxyPortHttp').value
+		var local = ""
+		if(host.length > 0 && port.length >0){
+			local = host+":"+port
+		}
 		let proxySettings = {
 		  proxyType: "manual",
-		  http: "127.0.0.1:6666",
+		  http: local,
 		  socksVersion: 4,
 		  //passthrough: ".example.org"
 		  httpProxyAll: true
 		};
 		browser.proxy.settings.set({value: proxySettings})
-		/*
-		browser.storage.local.set({
-		  proxyConfig: {type:"manual"}
-		});
-		*/
 		localStorage.proxyConfig = "manual";
-		console.log(proxySettings.proxyType + "--------------------------------4")
-		console.log(proxySettings.httpProxyAll + "--------------------------------4")
-
-		
 	});
 
 	var flag = 2
