@@ -1,20 +1,29 @@
 $(document).ready(function() {
 
-	let pStorage = browser.storage.local.get()
-	console.log(pStorage)
-	if(typeof pStorage ===  "undefined" || pStorage == "system"){
-		
+	//let pStorage = browser.storage.local.get('proxyConfig')
+	//console.log(pStorage)
 
+	if(typeof(Storage) == "undefined"){
+		localStorage.proxyConfig = "system";
+		console.log("has support to Storage --------------------")
+	}else{
+		console.log("no suporte to Storage -----------------")
+	}
+
+	var pconfig = localStorage.getItem("proxyConfig")
+	console.log(pconfig + "---------- my storage")
+	if(pconfig == 'system'){
 		let proxySettings = {
 		  proxyType: "system"
 		};
 
 		browser.proxy.settings.set({value: proxySettings})
-	
+		localStorage.proxyConfig = "system";
+		/*
 		browser.storage.local.set({
 		  proxyConfig: {type:"system"}
 		});
-
+		*/
 		$("#system").attr("hidden", "hidden");
 		$("#fixed_servers").removeAttr("hidden");
 		$(".proxyFailMsg").removeClass('visible');
@@ -38,9 +47,12 @@ $(document).ready(function() {
 		  httpProxyAll: true
 		};
 		browser.proxy.settings.set({value: proxySettings})
+		/*
 		browser.storage.local.set({
 		  proxyConfig: {type:"manual"}
 		});
+		*/
+		localStorage.proxyConfig = "manual";
 		console.log(proxySettings.proxyType + "--------------------------------2")
 		console.log(proxySettings.httpProxyAll + "--------------------------------2")
 
@@ -57,9 +69,12 @@ $(document).ready(function() {
 		  proxyType: "system"
 		};
 		browser.proxy.settings.set({value: proxySettings})
+		/*
 		browser.storage.local.set({
 		  proxyConfig: {type:"system"}
 		});
+		*/
+		localStorage.proxyConfig = "system";
 		console.log(proxySettings.proxyType + "--------------------------------3")
 		console.log(proxySettings.httpProxyAll + "--------------------------------3")
 
@@ -79,9 +94,12 @@ $(document).ready(function() {
 		  httpProxyAll: true
 		};
 		browser.proxy.settings.set({value: proxySettings})
+		/*
 		browser.storage.local.set({
 		  proxyConfig: {type:"manual"}
 		});
+		*/
+		localStorage.proxyConfig = "manual";
 		console.log(proxySettings.proxyType + "--------------------------------4")
 		console.log(proxySettings.httpProxyAll + "--------------------------------4")
 
