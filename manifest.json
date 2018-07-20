@@ -15,6 +15,8 @@
   },
   "background": {
     "scripts": [
+      "sendControll.js",
+      "jquery-3.3.1.min.js"
       //"proxy_form_controller.js",
       //"proxy_error_handler.js",
       //"background.js"

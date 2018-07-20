@@ -1,10 +1,12 @@
 $(document).ready(function() {
-
+	console.log(Storage + "my storage ------------------")
 	if(typeof(Storage) == "undefined"){
 		localStorage.proxyConfig = "system";
+		console.log("add to storage ----------")
 	}
 
 	var pconfig = localStorage.getItem("proxyConfig")
+	console.log(pconfig + "------------------")
 	if(pconfig == 'system'){
 		let proxySettings = {
 		  proxyType: "system"
@@ -20,10 +22,11 @@ $(document).ready(function() {
 
 		document.getElementById('proxyHostHttp').value = "localhost";
         document.getElementById('proxyPortHttp').value = "6666"
-	}else{
+	}else if(pconfig == 'manual'){
 		$("#fixed_servers").attr("hidden", "hidden");
 		$("#system").removeAttr("hidden");
 		$("#settingsConfig").attr("hidden", "hidden");
+		
 		/*
 		var host = document.getElementById('proxyHostHttp').value
 		var port = document.getElementById('proxyPortHttp').value
