@@ -20,7 +20,7 @@
   },
   "background": {
     "scripts": [
-      "sendControll.js"
+      "background.js"
     ]
   },
   "permissions": [
