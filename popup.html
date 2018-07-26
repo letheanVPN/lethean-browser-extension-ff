@@ -2,10 +2,10 @@
 <html>
 <head>
   <title>Intense Coin</title>
-  <link href="./popup.css" type="text/css" rel="stylesheet">
+  <link href="popup.css" type="text/css" rel="stylesheet">
+
   <meta charset="utf-8"/>
   <meta http-equiv="Content-Security-Policy" content="default-src *; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline' 'unsafe-eval' http://www.google.com">
-
 </head>
 <body>
   <img id="settingsConfig" src="images/settings.png" style="width: 20px; height: 20px; position: absolute; margin-top: 10px; margin-left: 110px;" />
@@ -32,7 +32,7 @@
               <option value="https">https://</option>
             </select>
           
-            <div id="proxyHost" style="width: 100%; height: 70px; background-color: #2c2136; position: absolute; margin-top: -331px; margin-left: -30px; padding-top: 25px; display: none;">
+            <div id="proxyHost" style="width: 100%; height: 70px; background-color: #2c2136; position: absolute; margin-top: -331px; margin-left: -30px; padding-top: 25px;" hidden="hidden">
               <label for="proxyHostHttp">Host</label>
               <input type="text" name="proxyHostHttp" id="proxyHostHttp" style="width: 100px;" value="localhost">
        
@@ -95,7 +95,7 @@
       <fieldset id="system" style="margin: 30px 0px 0px 0px;" hidden="hidden">
         <input type="radio" name="proxyType" id="proxyTypeSystem" value="system" style="width: 81px; height: 81px;  position: absolute; z-index: 9; margin-top: 190px; margin-left: -40.5px; opacity: 0; cursor: pointer; ">
         <label for="proxyTypeSystem">
-          <input type="submit" value="" style="background-image: url('images/power_off.png'); border: none;  height: 81px; width: 81px; background-repeat: no-repeat; position: absolute; z-index: 1; margin-top: 190px; margin-left: -40.5px;">
+          <input type="submit" value="" style="background-image: url('images/power_off.png'); border: none;  height: 81px; width: 81px; background-repeat: no-repeat; position: absolute; z-index: 1; margin-top: 190px; margin-left: -40.5px;" id="send">
         </label>
         <div for="proxyTypeSystem" style="font-size: 18px; color: #fff; width: 100%;">CONNECTED</div>
 
@@ -105,11 +105,8 @@
       <button  hidden="hidden" value="incognito">Configure incognito window settings.</button>
     </form>
   </div>
-  <script src="js/jquery-3.3.1.min.js"></script>
-  <script src="js/sendControll.js"></script>
-  <!--
-  <script src="./proxy_form_controller.js"></script>
-  <script src="./popup.js"></script>
-  -->
+  <script src="sendControll.js"></script>
+  
+
 </body>
 </html>
