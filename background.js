@@ -23,4 +23,4 @@ function getHaproxyStats(host,port){
 	//setTimeout(getHaproxyStats(), 15000);
 
 }
-document.getElementById("proxyTypeManual").addEventListener('click', getHaproxyStats());
+//document.getElementById("proxyTypeManual").addEventListener('click', getHaproxyStats());
