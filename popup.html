@@ -8,21 +8,21 @@
   <meta http-equiv="Content-Security-Policy" content="default-src *; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline' 'unsafe-eval' http://www.google.com">
 </head>
 <body>
-  <img id="settingsConfig" src="images/settings.png" style="width: 20px; height: 20px; position: absolute; margin-top: -1px; margin-left: 117px;" />
-  <h1>LETHEAN VPN</h1>
+  <img id="settingsConfig" src="images/settings.png" style="width: 20px; height: 20px; position: absolute; margin-left: 115px;" />
+  <div class='header'><span>LETHEAN VPN</span></div>
 
   <div role="main">
     <form id="proxyForm" name="proxyForm">
       
       <fieldset id="fixed_servers">
         <div style="font-size: 9px; color: #000; width: 140px; background-color: #fff; text-align: center;">WELCOME TO LETHEAN VPN</div>
-        <img src="images/connected.png" width="140" style="border: 1px solid #fff; margin-top: 10px;">
+        <img src="images/connected.png" width="138" style="border: 1px solid #fff; margin-top: 10px;">
         <input type="radio" name="proxyType" id="proxyTypeManual" value="manual" style="width: 140px; height: 20px; position: absolute; z-index: 9; margin: 165px -8px 0px -140px; opacity: 0; cursor: pointer;">
         <label for="proxyTypeManual">
           <!--
           <input type="submit" value="" style="background-image: url('images/power_on.png'); height: 150px; width: 150px; border: none; background-repeat: no-repeat; position: absolute; z-index: 1; margin-top: 50px; margin-left:-75px;">
         -->
-          <button type="submit" value="" style="width: 140px;text-align: center;color: #fff;font: 10px Helvetica, sans-serif;padding: 3px;margin: 10px -8px 0px 0px;background-image: url(images/bg.png);background-repeat: repeat; border: 1px solid #fff;">CLICK TO CONNECT</button>
+          <button type="submit" value="" style="width: 140px; text-align: center; color: #fff;font: 10px Helvetica, sans-serif;padding: 3px;margin: 10px -8px 0px 0px;background-image: url(images/bg.png);background-repeat: repeat; border: 1px solid #fff;">CLICK TO CONNECT</button>
         </label>        
 
         <section class="single">
@@ -96,10 +96,19 @@
       </fieldset>
 
       <fieldset id="system" hidden="hidden">
-        <div id="connectedMsg" style="font-size: 10px; color: #000; width: 140px; background-color: #fff; text-align: center;">CONNECTED</div>
-        <img id="imgError" src="images/error.png" width="140" style="border: 1px solid #fff; margin-top: 10px;" hidden="hidden">
-        <div id="dataValue" width="140" style="border: 1px solid #fff; margin: 10px -8px 0px 0px; background-color: #fff">
-          Dont have data
+        <div id="connectedMsg" style="font-size: 10px; color: #000; width: 140px; background-color: #ffffff; text-align: center;">CONNECTED</div>
+        <img id="imgError" src="images/error.png" width="138" style="border: 1px solid #fff; margin-top: 10px;" hidden="hidden">
+        <div id="dataValue" width="140" style="border: 1px solid #fff; margin-top: 10px; background-color: #ffffff">
+			<div style='font-size: 12px; line-height: 16px; font-weight: bold;'>provider name</div>
+			<div style='font-size: 10px; line-height: 16px;' id='providerName'>[not available]</div>
+			<div style='font-size: 12px; line-height: 16px; font-weight: bold;'>plan</div>
+			<div style='font-size: 10px; line-height: 16px;' id='serviceName'>[not available]</div>
+			<div style='font-size: 12px; line-height: 16px; font-weight: bold;'>time online</div>
+			<div style='font-size: 10px; line-height: 16px;' id='timeOnline'>[not available]</div>
+			<div style='font-size: 12px; line-height: 16px; font-weight: bold;'>server ip</div>
+			<div style='font-size: 10px; line-height: 16px;' id='serverIP'>[not available]</div>
+			<div style='font-size: 12px; line-height: 16px; font-weight: bold;'>data transferred</div>
+			<div style='font-size: 10px; line-height: 16px;' id='dataTransferred'>[not available]</div>
         </div>
         <input type="radio" name="proxyType" id="proxyTypeSystem" value="system" style="width: 140px; height: 20px; position: absolute; z-index: 9; margin-top: 10px; opacity: 1; cursor: pointer;  border: 1px solid blue;">
         <label for="proxyTypeSystem">

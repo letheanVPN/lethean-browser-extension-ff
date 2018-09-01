@@ -3,18 +3,23 @@ body {
   width: 140px;
   background-color: #000;
   font-size: 10px;
+  margin: 10px;
 }
 
-h1 {
-  color: #fff;
+.header {
+  color: #ffffff;
   font: 10px Helvetica, sans-serif;
-  padding: 3px;
-  margin: -8px 0px 0px -3px;
+  margin: -8px 0px 0px -5px;
   background-image: url(images/bg.png);
   background-repeat: repeat;
   border: 1px solid #fff;
   text-align: left;
-  width: 100%;
+  width: 138px;
+  line-height: 20px;
+}
+
+.header span {
+	padding: 3px;
 }
 
 fieldset{
