@@ -8,21 +8,21 @@
   <meta http-equiv="Content-Security-Policy" content="default-src *; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline' 'unsafe-eval' http://www.google.com">
 </head>
 <body>
-  <img id="settingsConfig" src="images/settings.png" style="width: 20px; height: 20px; position: absolute; margin-top: -1px; margin-left: 127px;" />
+  <img id="settingsConfig" src="images/settings.png" style="width: 20px; height: 20px; position: absolute; margin-top: -1px; margin-left: 117px;" />
   <h1>LETHEAN VPN</h1>
 
   <div role="main">
     <form id="proxyForm" name="proxyForm">
       
       <fieldset id="fixed_servers">
-        <div style="font-size: 10px; color: #000; width: 155px; background-color: #fff; text-align: center; margin-left: -3px;">WELCOME TO LETHEAN VPN</div>
-        <img src="images/connected.png" width="154" style="border: 1px solid #fff; margin-top: 10px; margin-left: -3px;">
-        <input type="radio" name="proxyType" id="proxyTypeManual" value="manual" style="width: 156px; height: 20px; position: absolute; z-index: 9; margin-top: 10px; margin-left: -3px; opacity: 0; cursor: pointer;">
+        <div style="font-size: 9px; color: #000; width: 140px; background-color: #fff; text-align: center;">WELCOME TO LETHEAN VPN</div>
+        <img src="images/connected.png" width="140" style="border: 1px solid #fff; margin-top: 10px;">
+        <input type="radio" name="proxyType" id="proxyTypeManual" value="manual" style="width: 140px; height: 20px; position: absolute; z-index: 9; margin: 165px -8px 0px -140px; opacity: 0; cursor: pointer;">
         <label for="proxyTypeManual">
           <!--
           <input type="submit" value="" style="background-image: url('images/power_on.png'); height: 150px; width: 150px; border: none; background-repeat: no-repeat; position: absolute; z-index: 1; margin-top: 50px; margin-left:-75px;">
         -->
-          <button type="submit" value="" style="width: 156px;text-align: center;color: #fff;font: 10px Helvetica, sans-serif;padding: 3px;margin: 10px -8px 0px -3px;background-image: url(images/bg.png);background-repeat: repeat; border: 1px solid #fff;">CLICK TO CONNECT</button>
+          <button type="submit" value="" style="width: 140px;text-align: center;color: #fff;font: 10px Helvetica, sans-serif;padding: 3px;margin: 10px -8px 0px 0px;background-image: url(images/bg.png);background-repeat: repeat; border: 1px solid #fff;">CLICK TO CONNECT</button>
         </label>        
 
         <section class="single">
@@ -35,12 +35,12 @@
               <option value="https">https://</option>
             </select>
           
-            <div id="proxyHost" style="width: 100%; height: 50px; position: absolute; margin-top: -227px; margin-left: -3px; padding: 10px; background-color: #2b2b2b; color: #fff;" hidden="hidden">
+            <div id="proxyHost" style="width: 140px; height: 50px; position: absolute; margin-top: -231px; padding: 10px; background-color: #2b2b2b; color: #fff; font-size: 9px;" hidden="hidden">
               <label for="proxyHostHttp">Host</label>
-              <input type="text" name="proxyHostHttp" id="proxyHostHttp" style="width: 105px; margin-left: 5px;"  value="localhost">
+              <input type="text" name="proxyHostHttp" id="proxyHostHttp" style="width: 80px; height: 12px; margin-left: 7px;"  value="localhost">
               <br />
               <label for="proxyPortHttp">Port</label>
-              <input type="text" name="proxyPortHttp" id="proxyPortHttp" style="width: 105px; margin-left: 7px;" class="port" value="6666"> 
+              <input type="text" name="proxyPortHttp" id="proxyPortHttp" style="width: 80px; height: 12px; margin-left: 9px;" class="port" value="6666"> 
             </div>
        
             
@@ -96,18 +96,18 @@
       </fieldset>
 
       <fieldset id="system" hidden="hidden">
-        <div id="connectedMsg" style="font-size: 10px; color: #000; width: 155px; background-color: #fff; text-align: center; margin-left: -3px;">CONNECTED</div>
-        <img id="imgError" src="images/error.png" width="154" style="border: 1px solid #fff; margin-top: 10px; margin-left: -3px;" hidden="hidden">
-        <div id="dataValue" width="154" style="border: 1px solid #fff; margin-top: 10px; margin-left: -3px; background-color: #fff">
+        <div id="connectedMsg" style="font-size: 10px; color: #000; width: 140px; background-color: #fff; text-align: center;">CONNECTED</div>
+        <img id="imgError" src="images/error.png" width="140" style="border: 1px solid #fff; margin-top: 10px;" hidden="hidden">
+        <div id="dataValue" width="140" style="border: 1px solid #fff; margin: 10px -8px 0px 0px; background-color: #fff">
           Dont have data
         </div>
-        <input type="radio" name="proxyType" id="proxyTypeSystem" value="system" style="width: 156px; height: 20px; position: absolute; z-index: 9; margin-top: 10px; margin-left: -3px; opacity: 0; cursor: pointer;">
+        <input type="radio" name="proxyType" id="proxyTypeSystem" value="system" style="width: 140px; height: 20px; position: absolute; z-index: 9; margin-top: 10px; opacity: 1; cursor: pointer;  border: 1px solid blue;">
         <label for="proxyTypeSystem">
           <!---
           <input type="submit" value="" style="background-image: url('images/power_off.png'); border: none;  height: 81px; width: 81px; background-repeat: no-repeat; position: absolute; z-index: 1; margin-top: 190px; margin-left: -40.5px;">
 
         -->
-        <button id="tryAgainMsg" type="submit" value="" style="width: 156px;text-align: center;color: #000;font: 10px Helvetica, sans-serif;padding: 3px;margin: 10px -8px 0px -3px; background-color: #fff;">DISCONNECT</button>
+        <button id="tryAgainMsg" type="submit" value="" style="width: 140px;text-align: center;color: #000;font: 10px Helvetica, sans-serif;padding: 3px;margin: 10px -8px 0px 0px; background-color: #fff;">DISCONNECT</button>
         </label>
       </fieldset>
 
