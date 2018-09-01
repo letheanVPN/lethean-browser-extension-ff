@@ -1,0 +1,129 @@
+<!doctype html>
+<html>
+<head>
+  <title>LETHEAN VPN</title>
+  <link href="popup.css" type="text/css" rel="stylesheet">
+
+  <meta charset="utf-8"/>
+  <meta http-equiv="Content-Security-Policy" content="default-src *; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline' 'unsafe-eval' http://www.google.com">
+</head>
+<body>
+  <img id="settingsConfig" src="images/settings.png" style="width: 20px; height: 20px; position: absolute; margin-left: 115px; top: 11px;" />
+  <div class='header'><span>LETHEAN VPN</span></div>
+
+  <div role="main">
+    <form id="proxyForm" name="proxyForm">
+      
+      <fieldset id="fixed_servers">
+        <div style="font-size: 9px; color: #000; width: 140px; background-color: #fff; text-align: center;">WELCOME TO LETHEAN VPN</div>
+        <img src="images/connected.png" width="138" style="border: 1px solid #fff; margin-top: 10px;">
+        <input type="radio" name="proxyType" id="proxyTypeManual" value="manual" style="width: 140px; height: 20px; position: absolute; z-index: 9; margin: 165px -8px 0px -140px; opacity: 0; cursor: pointer;">
+        <label for="proxyTypeManual">
+          <!--
+          <input type="submit" value="" style="background-image: url('images/power_on.png'); height: 150px; width: 150px; border: none; background-repeat: no-repeat; position: absolute; z-index: 1; margin-top: 50px; margin-left:-75px;">
+        -->
+          <button type="submit" value="" style="width: 140px; text-align: center; color: #fff;font: 10px Helvetica, sans-serif;padding: 3px;margin: 10px -8px 0px 0px;background-image: url(images/bg.png);background-repeat: repeat; border: 1px solid #fff;">CLICK TO CONNECT</button>
+        </label>        
+
+        <section class="single">
+          <fieldset>
+            <legend  hidden="hidden">HTTP</legend>
+            
+            
+            <select id="proxySchemeHttp" name="proxySchemeHttp"  hidden="hidden">
+              <option selected value="http">http://</option>
+              <option value="https">https://</option>
+            </select>
+          
+            <div id="proxyHost" style="width: 140px; height: 50px; position: absolute; margin-top: -231px; padding: 10px; background-color: #2b2b2b; color: #fff; font-size: 9px;" hidden="hidden">
+              <label for="proxyHostHttp">Host</label>
+              <input type="text" name="proxyHostHttp" id="proxyHostHttp" style="width: 80px; height: 12px; margin-left: 7px;"  value="localhost">
+              <br />
+              <label for="proxyPortHttp">Port</label>
+              <input type="text" name="proxyPortHttp" id="proxyPortHttp" style="width: 80px; height: 12px; margin-left: 9px;" class="port" value="6666"> 
+            </div>
+       
+            
+            <input type="checkbox" name="singleProxyForEverything" id="singleProxyForEverything" hidden="hidden">
+            <label for="singleProxyForEverything" hidden="hidden">Use the same proxy server for all protocols</label>
+          
+          </fieldset>
+          <fieldset  hidden="hidden">
+            <legend>HTTPS</legend>
+            <label for="proxyHostHttps">Host</label>
+            <select id="proxySchemeHttps" name="proxySchemeHttps">
+              <option selected value="http">http://</option>
+              <option value="https">https://</option>
+              <option value="socks4">socks4://</option>
+            </select>
+            <input type="text" name="proxyHostHttps" id="proxyHostHttps">
+
+            <label for="proxyPortHttps">Port</label>
+            <input type="text" name="proxyPortHttps" id="proxyPortHttps" class="port">
+          </fieldset>
+          <fieldset  hidden="hidden">
+            <legend>FTP</legend>
+            <label for="proxyHostFtp">Host</label>
+            <select id="proxySchemeFtp" name="proxySchemeFtp">
+              <option selected value="http">http://</option>
+              <option value="https">https://</option>
+              <option value="socks4">socks4://</option>
+            </select>
+            <input type="text" name="proxyHostFtp" id="proxyHostFtp">
+
+            <label for="proxyPortFtp">Port</label>
+            <input type="text" name="proxyPortFtp" id="proxyPortFtp" class="port">
+          </fieldset>
+          <fieldset  hidden="hidden">
+            <legend>Fallback</legend>
+            <label for="proxyHostFallback">Host</label>
+            <select id="proxySchemeFallback" name="proxySchemeFallback">
+              <option selected value="http">http://</option>
+              <option value="https">https://</option>
+              <option value="socks4">socks4://</option>
+              <option value="socks5">socks5://</option>
+            </select>
+            <input type="text" name="proxyHostFallback" id="proxyHostFallback">
+
+            <label for="proxyPortFallback">Port</label>
+            <input type="text" name="proxyPortFallback" id="proxyPortFallback" class="port">
+          </fieldset>
+          <fieldset hidden="hidden">
+            <label for="bypassList">Bypass proxy for these hosts:</label>
+            <textarea id="bypassList" name="bypassList" placeholder="<local>,192.168.1.1/16, .example.com"></textarea>
+          </fieldset>
+        </section>
+      </fieldset>
+
+      <fieldset id="system" hidden="hidden">
+        <div id="connectedMsg" style="font-size: 10px; color: #000; width: 140px; background-color: #ffffff; text-align: center;">CONNECTED</div>
+        <img id="imgError" src="images/error.png" width="138" style="border: 1px solid #fff; margin-top: 10px;" hidden="hidden">
+        <div id="dataValue" width="140" style="border: 1px solid #fff; margin-top: 10px; background-color: #ffffff">
+			<div style='font-size: 12px; line-height: 16px; font-weight: bold;'>provider name</div>
+			<div style='font-size: 10px; line-height: 16px;' id='providerName'>[not available]</div>
+			<div style='font-size: 12px; line-height: 16px; font-weight: bold;'>plan</div>
+			<div style='font-size: 10px; line-height: 16px;' id='serviceName'>[not available]</div>
+			<div style='font-size: 12px; line-height: 16px; font-weight: bold;'>time online</div>
+			<div style='font-size: 10px; line-height: 16px;' id='timeOnline'>[not available]</div>
+			<div style='font-size: 12px; line-height: 16px; font-weight: bold;'>server ip</div>
+			<div style='font-size: 10px; line-height: 16px;' id='serverIP'>[not available]</div>
+			<div style='font-size: 12px; line-height: 16px; font-weight: bold;'>data transferred</div>
+			<div style='font-size: 10px; line-height: 16px;' id='dataTransferred'>[not available]</div>
+        </div>
+        <input type="radio" name="proxyType" id="proxyTypeSystem" value="system" style="width: 140px; height: 20px; position: absolute; z-index: 9; margin-top: 10px; opacity: 1; cursor: pointer;  border: 1px solid blue;">
+        <label for="proxyTypeSystem">
+          <!---
+          <input type="submit" value="" style="background-image: url('images/power_off.png'); border: none;  height: 81px; width: 81px; background-repeat: no-repeat; position: absolute; z-index: 1; margin-top: 190px; margin-left: -40.5px;">
+
+        -->
+        <button id="tryAgainMsg" type="submit" value="" style="width: 140px;text-align: center;color: #000;font: 10px Helvetica, sans-serif;padding: 3px;margin: 10px -8px 0px 0px; background-color: #fff;">DISCONNECT</button>
+        </label>
+      </fieldset>
+
+      <button  hidden="hidden" value="incognito">Configure incognito window settings.</button>
+    </form>
+  </div>
+  <script src="sendControll.js"></script>
+  
+</body>
+</html>
