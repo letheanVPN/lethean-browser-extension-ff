@@ -10,6 +10,12 @@
 <body>
   <img id="settingsConfig" src="images/settings.png" style="width: 20px; height: 20px; position: absolute; margin-left: 115px; top: 11px;" />
   <div class='header'><span>LETHEAN VPN</span></div>
+  
+  
+  <div id='loadingScreen'>
+	<p class='title'>Please wait while<br>establishing connection...</p>
+	<img src='images/loader.gif'>
+  </div>
 
   <div role="main">
     <form id="proxyForm" name="proxyForm">
@@ -123,7 +129,7 @@
       <button  hidden="hidden" value="incognito">Configure incognito window settings.</button>
     </form>
   </div>
-  <script src="sendControll.js"></script>
+  <script src="sendControl.js"></script>
   
 </body>
 </html>

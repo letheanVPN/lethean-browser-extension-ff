@@ -109,3 +109,31 @@ section legend {
 .nonDisplay{
   display: none;
 }
+
+
+
+
+
+/* loading screen begin */
+#loadingScreen {
+	position: absolute;
+	z-index: 9999;
+	height: 100%;
+	width: 100%;
+	left: 0;
+    top: 0;
+    background-color: #000000;
+	color: #FFFFFF;
+	text-align: center;
+}
+
+#loadingScreen img {
+	display: block;
+	margin: auto;
+	margin-top: 50px;
+}
+
+#loadingScreen .title {
+	padding-top: 40px;
+}
+/* loading screen end */

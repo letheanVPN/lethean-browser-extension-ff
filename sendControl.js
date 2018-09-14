@@ -1,42 +1,8 @@
-var flag = 2;
 
-var defaultHost = "localhost";
-var defaultPort = "8180";
 
-var GREEN = [124, 252, 0, 255];
-var RED = [255, 0, 0, 255];
-var YELLOW = [255, 205, 0, 255];
+document.getElementById("proxyTypeSystem").addEventListener('click', function() { // disconnect click
+	console.log("Disconnect Clicked");
 
-var connectionStatus = false;
-
-if (typeof(Storage) == "undefined"){
-	localStorage.proxyConfig = "system";
-}
-
-var pconfig = localStorage.getItem("proxyConfig");
-
-if (pconfig == 'system') { // disconnected
-	var proxySettings = {
-		proxyType: "system"
-	};
-
-	browser.proxy.settings.set({value: proxySettings})
-	localStorage.proxyConfig = "system";
-	document.getElementById("system").setAttribute("hidden", "hidden");
-	document.getElementById("fixed_servers").removeAttribute("hidden")
-	document.getElementById("settingsConfig").removeAttribute("hidden")	
-	document.getElementById('proxyHostHttp').value = defaultHost;
-    document.getElementById('proxyPortHttp').value = defaultPort;
-}
-else if(pconfig == 'manual') {
-	document.getElementById("fixed_servers").setAttribute("hidden", "hidden");
-	document.getElementById("system").removeAttribute("hidden")
-	document.getElementById("settingsConfig").setAttribute("hidden", "hidden");
-	
-}
-
-//$('input[id=proxyTypeSystem]').click(function() {
-document.getElementById("proxyTypeSystem").addEventListener('click', function() {
 	document.getElementById("system").setAttribute("hidden", "hidden");
 	document.getElementById("fixed_servers").removeAttribute("hidden")
 	document.getElementById("settingsConfig").removeAttribute("hidden")	
@@ -55,7 +21,12 @@ document.getElementById("proxyTypeSystem").addEventListener('click', function() 
 	updateBadge(connectionStatus);
 });
 
-document.getElementById("proxyTypeManual").addEventListener('click', function() { // connected
+document.getElementById("proxyTypeManual").addEventListener('click', function() { // connect click
+	console.log("Connect Clicked");
+	
+	// show loading screen
+	showLoadingScreen(true);
+
 	document.getElementById("fixed_servers").setAttribute("hidden", "hidden");
 	document.getElementById("system").removeAttribute("hidden")
 	document.getElementById("settingsConfig").setAttribute("hidden", "hidden");
@@ -78,6 +49,8 @@ document.getElementById("proxyTypeManual").addEventListener('click', function() 
 	
 	connectionStatus = true;
 	updateBadge(connectionStatus);
+	
+	resetOnlineTimerCheck();
 });
 
 
@@ -92,23 +65,6 @@ document.getElementById("settingsConfig").addEventListener('click', function() {
 });
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 /* dashboard page updates procedures */
 function setServerIP(ip) {
 	serverIP = ip;
@@ -117,56 +73,17 @@ function setServerIP(ip) {
 	document.getElementById('serverIP').innerHTML = serverIP;
 }
 
-// sets the values on the connected screen
-function setConnectionValues(providerName, serviceName, timeOnline, serverIP, dataTransferred) {
-	console.log("Setting Connection Values");
-	document.getElementById('providerName').innerHTML = providerName;
-	document.getElementById('serviceName').innerHTML = serviceName;
-	document.getElementById('timeOnline').innerHTML = timeOnline;
-	setServerIP(serverIP);
-	document.getElementById('dataTransferred').innerHTML = dataTransferred;
-}
 
 
 
-
-
-
-function onlineStatusResponseCheck(request) {
-	if (request.status == 200) {
-		var response = JSON.parse(request.response);
-		
-		setServerIP(response.ip);
-		
-		updateBadge(true);
+function showLoadingScreen(state) {
+	if (state == true) {
+		document.getElementById("loadingScreen").removeAttribute("hidden");
 	}
-	else if (request.status == 0) {
-		updateBadge(false);
+	else {
+		document.getElementById("loadingScreen").setAttribute("hidden", "hidden");
 	}
 }
-
-// check if extension is online
-function checkOnlineStatus() {
-	var url = "https://geoip.nekudo.com/api/";
-	var xmlhttp = new XMLHttpRequest();
-	
-	xmlhttp.onreadystatechange = function() {
-		if (xmlhttp.readyState === 4) {
-			console.log("Response received after checking for connectivity");
-			onlineStatusResponseCheck(xmlhttp);
-			// this is in miliseconds, not sure why!
-			//setTimeout(checkOnlineStatus(), 100000000000);
-		}
-	}
-	
-	xmlhttp.open("GET", url, true);
-	xmlhttp.timeout = 2500; // time in milliseconds
-	xmlhttp.setRequestHeader('Access-Control-Allow-Origin','*');
-	xmlhttp.setRequestHeader('Access-Control-Allow-Methods', '*');
-	xmlhttp.setRequestHeader('Access-Control-Allow-Headers', '*');
-	xmlhttp.send();
-}
-
 
 
 
@@ -225,25 +142,78 @@ function updateProxyStats() {
 }
 
 
-// update badge depending on connection status
-function updateBadge(connected) {
-	// if we don't check connection status extension will report connected with clients default ip address
-	if (connected == false || connectionStatus == false) {
-		browser.browserAction.setBadgeText({ text: "X" });
-		browser.browserAction.setBadgeBackgroundColor({color: RED});
+
+
+
+
+
+/* communication with background script BEGIN */
+var myPort = browser.runtime.connect({name:"port-from-cs"});
+
+// array of pending messages to be sent between background and content script
+var pendingMessages = [];
+
+console.log("myPort in content script");
+console.log(myPort);
+
+myPort.onMessage.addListener(function(m) {
+  console.log("In content script, received message from background script: ");
+  console.log(m);
+  
+  // we received a method request from the background thread
+  if (m.method != undefined) {
+	  processReceivedMessage(m);
+  }
+});
+
+function processReceivedMessage(m) {
+	if (m.method == 'ip') {
+		setServerIP(m.parms[0]);
 	}
-	else {
-		browser.browserAction.setBadgeText({ text: "O" });
-		browser.browserAction.setBadgeBackgroundColor({color: GREEN});
+	else if (m.method == 'loading') {
+		showLoadingScreen(m.parms[0]);
 	}
 }
 
 
+// update badge depending on connection status
+function updateBadge(connected) {
+	var message = {method: "badge", parms: [ connected ]};
+	
+	if (myPort == null || myPort.disconnected) {
+		console.log("No Connection to background script");
+		pendingMessages.push(message);
+		return;
+	}
+	
+	myPort.postMessage(message);
+}
+
+
+// timer reset needs to be called in background script
+function resetOnlineTimerCheck() {
+	var message = {method: "timer", parms: [ ]};
+	
+	if (myPort == null || myPort.disconnected) {
+		console.log("No Connection to background script");
+		pendingMessages.push(message);
+		return;
+	}
+	
+	myPort.postMessage(message);
+}
+
+
+/* communication with background script END */
 
 
 
-checkOnlineStatus();
 
-updateProxyStats();
 
-//document.getElementById("proxyTypeManual").addEventListener('click', getHaproxyStats());
+
+
+
+
+
+// hide loading screen after startup
+showLoadingScreen(false);
