@@ -14,8 +14,8 @@ document.getElementById("proxyTypeSystem").addEventListener('click', function() 
 	};
 	browser.proxy.settings.set({value: proxySettings})
 	localStorage.proxyConfig = "system";
-	document.getElementById('proxyHostHttp').value = defaultHost;
-    document.getElementById('proxyPortHttp').value = defaultPort;
+	document.getElementById('proxyHostHttp').value = localStorage.getItem('proxyHost');
+    document.getElementById('proxyPortHttp').value = localStorage.getItem('proxyPort');
 	
 	connectionStatus = false;
 	updateBadge(connectionStatus);
@@ -65,12 +65,28 @@ document.getElementById("settingsConfig").addEventListener('click', function() {
 });
 
 
-/* dashboard page updates procedures */
+// dashboard page updates - ip - received from background script
 function setServerIP(ip) {
 	serverIP = ip;
 	
 	console.log("Setting server IP to " + serverIP);
 	document.getElementById('serverIP').innerHTML = serverIP;
+}
+
+// dashboard page updates - stats - received from background script
+function setProxyStats(onlineTime, transferredData) {
+	console.log("Setting Online time to " + onlineTime + " and transferred data to " + transferredData);
+	
+	document.getElementById('timeOnline').innerHTML = onlineTime;
+	document.getElementById('dataTransferred').innerHTML = transferredData;
+}
+
+// dashboard page updates - provider - received from background script
+function setProxyProvider(provider, service) {
+	console.log("Setting Provider to " + provider + " and serviceName to " + service);
+	
+	document.getElementById('providerName').innerHTML = provider;
+	document.getElementById('serviceName').innerHTML = service;
 }
 
 
@@ -88,58 +104,6 @@ function showLoadingScreen(state) {
 
 
 
-
-
-// update connection stats if we are indeed connected
-function updateProxyStats() {
-	var haproxyIp = document.getElementById('proxyHostHttp').value;
-    var haproxyPort = parseInt(document.getElementById('proxyPortHttp').value, 10);
-	
-	// return and check later if host or port is invalid
-	if (haproxyIp == "" || isNaN(haproxyPort)) {
-		setTimeout(function() {
-			updateProxyStats();
-		}, 5000);
-		
-		return;
-	}
-	
-	var url = "http://" + haproxyIp + ":" + haproxyPort + "/haproxy_stats;csv";
-	
-	console.log("Checking HAProxy @ " + url);
-		
-	var xmlhttp = new XMLHttpRequest();
-	
-	xmlhttp.onreadystatechange = function() {
-		if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
-			var haproxyStats = csvToArray(xmlhttp.responseText);
-			haproxyStats = JSON.stringify(haproxyStats[1]);
-			haproxyStats = haproxyStats.split(',');
-			haproxyStats[8] = haproxyStats[8].replace('"', '');
-			haproxyStats[9] = haproxyStats[9].replace('"', '');
-			console.log("Download: " + formatBytes(parseInt(haproxyStats[8])) + " / Upload: "+ formatBytes(parseInt(haproxyStats[9])));
-			
-			/*
-			setTimeout(function() {
-				updateProxyStats();
-			}, 5000);
-			*/
-		}
-		/*
-		console.log(xmlhttp);
-		console.log(xmlhttp.responseText);
-		*/
-	}
-
-	xmlhttp.open("GET", url, true);
-	xmlhttp.timeout = 2000; // time in milliseconds
-    xmlhttp.setRequestHeader('Access-Control-Allow-Origin','*');
-    xmlhttp.setRequestHeader('Access-Control-Allow-Methods', '*');
-    xmlhttp.setRequestHeader('Access-Control-Allow-Headers', '*');
-    xmlhttp.send();
-	
-	//setConnectionValues("Provider", "Service", "Time Online", "Server IP", "Data");
-}
 
 
 
@@ -166,12 +130,19 @@ myPort.onMessage.addListener(function(m) {
   }
 });
 
+// process messages sent by background script
 function processReceivedMessage(m) {
 	if (m.method == 'ip') {
 		setServerIP(m.parms[0]);
 	}
 	else if (m.method == 'loading') {
 		showLoadingScreen(m.parms[0]);
+	}
+	else if (m.method == 'provider') {
+		setProxyProvider(m.parms[0], m.parms[1]);
+	}
+	else if (m.method == 'stats') {
+		setProxyStats(m.parms[0], m.parms[1]);
 	}
 }
 
@@ -202,7 +173,6 @@ function resetOnlineTimerCheck() {
 	
 	myPort.postMessage(message);
 }
-
 
 /* communication with background script END */
 

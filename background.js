@@ -3,7 +3,7 @@
 var flag = 2;
 
 var defaultHost = "localhost";
-var defaultPort = "8180";
+var defaultPort = "8181";
 
 var GREEN = [124, 252, 0, 255];
 var RED = [255, 0, 0, 255];
@@ -11,13 +11,23 @@ var YELLOW = [255, 205, 0, 255];
 
 var connectionStatus = false;
 
+// url to get current IP address
 var geoip_URL = "https://geoip.nekudo.com/api/";
+// url to get transferred stats
+var haproxy_stats_URL = "/stats";
+// url to get provider and plan
+var haproxy_provider_URL = "/provider";
 
 
 // interval between each online check. Increase if successfull, decrease if unsuccessfull
 var defaultOnlineCheckTimeout = 5000;
 var onlineCheckTimeout = 5000;
 var onlineTimeoutID = 0; // id of the latest timeout so we can reset it if needed
+
+// interval between each connection information check. currently it does not increase nor decrease
+var defaultConnectionInformationCheckTimeout = 10000;
+var connectionInformationCheckTimeout = 10000;
+var connectionInformationTimeoutID = 0; // id of the latest timeout so we can reset it if needed
 
 // string when values to be shown are not available
 var stringNotAvailable = "[not available]";
@@ -36,10 +46,10 @@ function resetTimeoutOnline() {
 	
 	// timeout
 	var newExecution = Date.now() + onlineCheckTimeout;
-	console.log(newExecution + " " + Date.now());
+	console.log(Date.now() + " " + newExecution);
 	
 	// recall online validation with new timeout
-	browser.alarms.clearAll();
+	browser.alarms.clear("checkOnlineStatus");
 	browser.alarms.create("checkOnlineStatus", {
 		when: newExecution
 	});
@@ -61,6 +71,41 @@ function resetOnlineTimerCheck() {
 
 
 
+
+// reset the timeout for validating connectionInformation
+function resetTimeoutConnectionInformation() {
+	console.log("Clearing ConnectionInformation timeout ID " + connectionInformationTimeoutID);
+	
+	// timeout
+	var newExecution = Date.now() + connectionInformationCheckTimeout;
+	console.log(Date.now() + " " + newExecution);
+	
+	// recall online validation with new timeout
+	browser.alarms.clear("checkConnectionInformation");
+	browser.alarms.create("checkConnectionInformation", {
+		when: newExecution
+	});
+}
+
+
+// reset intervals between connection checks and call the method again
+function resetConnectionInformationTimerCheck() {
+	connectionInformationCheckTimeout = defaultConnectionInformationCheckTimeout;
+	resetTimeoutConnectionInformation();
+}
+
+
+
+
+
+// setup localStorage variables
+// set default value in storage
+if (localStorage.getItem('proxyHost') == null) {
+	localStorage.setItem('proxyHost', defaultHost);
+}
+if (localStorage.getItem('proxyPort') == null) {
+	localStorage.setItem('proxyPort', defaultPort);
+}
 
 
 
@@ -115,16 +160,22 @@ function updateBadge(connected) {
 
 
 
+// listener for alarms to trigger online check validation
+browser.alarms.onAlarm.addListener((alarm) => {
+	console.log("Received alarm");
+	if (alarm.name == "checkOnlineStatus") {
+		checkOnlineStatus();
+	}
+	else if (alarm.name == "checkConnectionInformation") {
+		checkProxyStats();
+		checkProxyProvider();
+	}
+	else {
+		console.log("Unhandled alarm!");
+	}
+});
 
-// sets the values on the connected screen
-function setConnectionValues(providerName, serviceName, timeOnline, serverIP, dataTransferred) {
-	console.log("Setting Connection Values");
-	document.getElementById('providerName').innerHTML = providerName;
-	document.getElementById('serviceName').innerHTML = serviceName;
-	document.getElementById('timeOnline').innerHTML = timeOnline;
-	setServerIP(serverIP);
-	document.getElementById('dataTransferred').innerHTML = dataTransferred;
-}
+
 
 
 
@@ -154,14 +205,10 @@ function onlineStatusResponseCheck(request) {
 		// reset interval for checks if last request was unsuccessfull and recursively call to the function
 		resetOnlineTimerCheck();
 	}
+	// TODO - what to do in case of other status
 	
 	showLoadingScreen(false);
 }
-
-// listener for alarm to trigger online check validation
-browser.alarms.onAlarm.addListener((alarm) => {
-	checkOnlineStatus();
-});
 
 
 
@@ -189,6 +236,125 @@ function checkOnlineStatus() {
 }
 
 
+// check proxy stats
+function checkProxyStats() {
+	var haproxyHost = localStorage.getItem('proxyHost');
+	var haproxyPort = parseInt(localStorage.getItem('proxyPort'), 10);
+	
+	// return and check later if host or port is invalid
+	if (haproxyHost == "" || isNaN(haproxyPort)) {
+		console.log("Invalid HaProxy Host (" + haproxyHost + ") or Port (" + haproxyPort + ")");
+		
+		resetConnectionInformationTimerCheck();
+		
+		return;
+	}
+	
+	
+	var xmlhttp = new XMLHttpRequest();
+	
+	xmlhttp.onreadystatechange = function() {
+		if (xmlhttp.readyState == 4) {
+			console.log("Response received after checking proxy stats");
+			
+			proxyStatsResponseCheck(xmlhttp);
+		}
+	}
+	
+	xmlhttp.open("GET", "http://" + haproxyHost + ":" + haproxyPort + haproxy_stats_URL, true);
+	xmlhttp.timeout = 2500; // time in milliseconds
+	xmlhttp.setRequestHeader('Access-Control-Allow-Origin','*');
+	xmlhttp.setRequestHeader('Access-Control-Allow-Methods', '*');
+	xmlhttp.setRequestHeader('Access-Control-Allow-Headers', '*');
+	xmlhttp.send();
+}
+
+
+
+// update connection stats if we are indeed connected
+function proxyStatsResponseCheck(response) {	
+	console.log("proxyStatsResponseCheck " + response.status);
+	
+	console.log(response);
+	
+	if (response.status == 200) {
+		var haproxyStats = csvToArray(response.responseText);
+		haproxyStats = JSON.stringify(haproxyStats[1]);
+		haproxyStats = haproxyStats.split(',');
+		var download = formatBytes(parseInt(haproxyStats[8].replace('"', '')));
+		var upload = formatBytes(parseInt(haproxyStats[9].replace('"', '')));
+		
+		// TODO - get real time
+		var timeOnline = "00:00:00";
+		
+		console.log("Download: " + download + " / Upload: " + upload);
+		
+		setProxyStats(timeOnline, "D: " + download + " U: " + upload);
+	}
+	else {
+		setProxyStats("ERROR", "ERROR");
+	}
+}
+
+
+
+
+
+// check proxy stats
+function checkProxyProvider() {
+	var haproxyHost = localStorage.getItem('proxyHost');
+	var haproxyPort = parseInt(localStorage.getItem('proxyPort'), 10);
+	
+	// return and check later if host or port is invalid
+	if (haproxyHost == "" || isNaN(haproxyPort)) {
+		console.log("Invalid HaProxy Host (" + haproxyHost + ") or Port (" + haproxyPort + ")");
+		
+		resetConnectionInformationTimerCheck();
+		
+		return;
+	}
+	
+	
+	var xmlhttp = new XMLHttpRequest();
+	
+	xmlhttp.onreadystatechange = function() {
+		if (xmlhttp.readyState == 4) {
+			console.log("Response received after checking proxy stats");
+			
+			proxyProviderResponseCheck(xmlhttp);
+		}
+	}
+	
+	xmlhttp.open("GET", "http://" + haproxyHost + ":" + haproxyPort + haproxy_provider_URL, true);
+	xmlhttp.responseType = 'json';
+	xmlhttp.timeout = 2500; // time in milliseconds
+	xmlhttp.setRequestHeader('Access-Control-Allow-Origin','*');
+	xmlhttp.setRequestHeader('Access-Control-Allow-Methods', '*');
+	xmlhttp.setRequestHeader('Access-Control-Allow-Headers', '*');
+	xmlhttp.send();
+}
+
+
+
+// update connection stats if we are indeed connected
+function proxyProviderResponseCheck(response) {	
+	console.log("proxyProviderResponseCheck " + response.status);
+	
+	console.log(response);
+	
+	if (response.status == 200) {
+		console.log("Provider: " + response.provider + " / Service: " + response.service);
+		
+		setProxyProvider(response.provider, response.service);
+	}
+	else {
+		setProxyProvider("ERROR", "ERROR");
+	}
+}
+
+
+
+
 
 
 /* communication with content script begin */
@@ -207,6 +373,11 @@ function connected(p) {
 		}
 	});
 	
+	portFromCS.onDisconnect.addListener(function(m) {
+		console.log("Content script has disconnected");
+		portFromCS = null;
+	});
+	
 	if (pendingMessages.length != 0) {
 		console.log("We have messages pending processing");
 
@@ -221,32 +392,46 @@ function connected(p) {
 }
 
 
+// send generic message to content script
+function sendMessageToContentScript(message) {
+	if (portFromCS == null) {
+		console.log("No Connection to content script");
+		pendingMessages.push(message);
+		return;
+	}
+	
+	portFromCS.postMessage(message);
+}
+
 // send server ip to content script
 function setServerIP(serverIP) {
 	var message = {method: "ip", parms: [ serverIP ]};
 	
-	if (portFromCS == null || portFromCS.disconnected) {
-		console.log("No Connection to content script");
-		pendingMessages.push(message);
-		return;
-	}
-	
-	portFromCS.postMessage(message);
+	sendMessageToContentScript(message);
 }
 
+// send proxy stats to content script
+function setProxyStats(onlineTime, transferredData) {
+	var message = {method: "stats", parms: [ onlineTime, transferredData ]};
+	
+	sendMessageToContentScript(message);
+}
 
+// send provider details to content script
+function setProxyProvider(provider, service) {
+	var message = {method: "provider", parms: [ provider, service ]};
+	
+	sendMessageToContentScript(message);
+}
+
+// send loading screen update to content script
 function showLoadingScreen(state) {
 	var message = {method: "loading", parms: [ state ]};
 	
-	if (portFromCS == null || portFromCS.disconnected) {
-		console.log("No Connection to content script");
-		pendingMessages.push(message);
-		return;
-	}
-	
-	portFromCS.postMessage(message);
+	sendMessageToContentScript(message);
 }
 
+// process received messages from content script
 function processReceivedMessage(m) {
 	if (m.method == 'timer') {
 		resetOnlineTimerCheck();
@@ -260,8 +445,11 @@ browser.runtime.onConnect.addListener(connected);
 
 
 
+
+
+
 // activate method to check if we are online
 resetOnlineTimerCheck();
 
-
-//updateProxyStats();
+// activate method to check connection information
+resetConnectionInformationTimerCheck();
