@@ -260,13 +260,88 @@ function checkProxyStats() {
 			proxyStatsResponseCheck(xmlhttp);
 		}
 	}
+
+
+	var url = "http://" + haproxyHost + ":8181/stats;csv";
 	
-	xmlhttp.open("GET", "http://" + haproxyHost + ":" + haproxyPort + haproxy_stats_URL, true);
+	xmlhttp.open("GET", url, true);
 	xmlhttp.timeout = 2500; // time in milliseconds
 	xmlhttp.setRequestHeader('Access-Control-Allow-Origin','*');
 	xmlhttp.setRequestHeader('Access-Control-Allow-Methods', '*');
 	xmlhttp.setRequestHeader('Access-Control-Allow-Headers', '*');
 	xmlhttp.send();
+}
+
+function csvToArray( strData, strDelimiter ){
+  strDelimiter = (strDelimiter || ",");
+  var objPattern = new RegExp(
+      (
+          // Delimiters.
+          "(\\" + strDelimiter + "|\\r?\\n|\\r|^)" +
+
+          // Quoted fields.
+          "(?:\"([^\"]*(?:\"\"[^\"]*)*)\"|" +
+
+          // Standard fields.
+          "([^\"\\" + strDelimiter + "\\r\\n]*))"
+      ),
+      "gi"
+      );
+
+  var arrData = [[]];
+
+  var arrMatches = null;
+  while (arrMatches = objPattern.exec( strData )){
+
+      var strMatchedDelimiter = arrMatches[ 1 ];
+      if (
+          strMatchedDelimiter.length &&
+          strMatchedDelimiter !== strDelimiter
+          ){
+          arrData.push( [] );
+
+      }
+
+      var strMatchedValue;
+      if (arrMatches[ 2 ]){
+          strMatchedValue = arrMatches[ 2 ].replace(
+              new RegExp( "\"\"", "g" ),
+              "\""
+              );
+
+      } else {
+          strMatchedValue = arrMatches[ 3 ];
+      }
+
+      arrData[ arrData.length - 1 ].push( strMatchedValue );
+  }
+  return( arrData );
+}
+
+
+function timer(time) {
+  secs = parseFloat(time)
+  console.log(secs + " my secs ------------")
+  var h = secs/60/60
+  var m = (secs/60)%60
+  var s = secs%60
+  var array = [h,m,s].map(Math.floor)
+  var value = ''
+  for(x = 0; x < array.length; x++){
+      if(array[x] < 10){
+          array[x] = "0" + array[x]
+      }else{
+          array[x] = array[x]
+      }
+      function getCom(y){
+          if(y < 2){return ":"}else{return ""}
+      }
+      var c = getCom(x)
+      value = value + array[x] + c
+  }
+
+  return value
+
 }
 
 
@@ -280,16 +355,25 @@ function proxyStatsResponseCheck(response) {
 	if (response.status == 200) {
 		var haproxyStats = csvToArray(response.responseText);
 		haproxyStats = JSON.stringify(haproxyStats[1]);
+		console.log(haproxyStats + "my haproxyStats")
 		haproxyStats = haproxyStats.split(',');
-		var download = formatBytes(parseInt(haproxyStats[8].replace('"', '')));
-		var upload = formatBytes(parseInt(haproxyStats[9].replace('"', '')));
+		haproxyStats[8] = haproxyStats[8].replace('"', '');
+		haproxyStats[9] = haproxyStats[9].replace('"', '');
 		
-		// TODO - get real time
-		var timeOnline = "00:00:00";
+		var data = "D: " + formatBytes(parseInt(haproxyStats[9])) + " U: " + formatBytes(parseInt(haproxyStats[8]));
+		console.log("Download: " + formatBytes(parseInt(haproxyStats[8])) + " / Upload: "+ formatBytes(parseInt(haproxyStats[9])));
+		// parse time online from /stats;csv
+		haproxyStats = csvToArray(response.responseText);
+		haproxyStats = JSON.stringify(haproxyStats[3]);
+		console.log(haproxyStats + "my haproxyStats")
+		haproxyStats = haproxyStats.split(',');
+		haproxyStats[23] = haproxyStats[23].replace('"', '');
+
+		var timeOnline = haproxyStats[23];
 		
-		console.log("Download: " + download + " / Upload: " + upload);
+		setProxyStats(timeOnline, data);
 		
-		setProxyStats(timeOnline, "D: " + download + " U: " + upload);
+		//setProxyStats(timeOnline, "D: " + download + " U: " + upload);
 	}
 	else {
 		setProxyStats("ERROR", "ERROR");
@@ -325,7 +409,8 @@ function checkProxyProvider() {
 		}
 	}
 	
-	xmlhttp.open("GET", "http://" + haproxyHost + ":" + haproxyPort + haproxy_provider_URL, true);
+	var urlProvider = "http://127.0.0.1:8182/provider";
+	xmlhttp.open("GET", urlProvider, true);
 	xmlhttp.responseType = 'json';
 	xmlhttp.timeout = 2500; // time in milliseconds
 	xmlhttp.setRequestHeader('Access-Control-Allow-Origin','*');
@@ -343,9 +428,15 @@ function proxyProviderResponseCheck(response) {
 	console.log(response);
 	
 	if (response.status == 200) {
-		console.log("Provider: " + response.provider + " / Service: " + response.service);
+		console.log(response.responseText);
+		var providerStats = JSON.parse(response.responseText);
+		console.log(providerStats.provider + " my provider 0")
+		console.log(providerStats.service + " my provider 0")
+		//document.getElementById("providerName").innerText = providerStats.provider;
+		//document.getElementById("serviceName").innerText = providerStats.service;
+		setProxyProvider(providerStats.provider, providerStats.service);
 		
-		setProxyProvider(response.provider, response.service);
+		//setProxyProvider(response.provider, response.service);
 	}
 	else {
 		setProxyProvider("ERROR", "ERROR");
