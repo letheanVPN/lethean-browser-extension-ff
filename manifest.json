@@ -31,7 +31,7 @@
     "webNavigation",
     "webRequest",
     "webRequestBlocking",
-	"alarms",
+    "alarms",
     "<all_urls>"
   ],
   "manifest_version": 2
