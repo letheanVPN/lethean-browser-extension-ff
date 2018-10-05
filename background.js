@@ -84,59 +84,6 @@ function checkOnlineStatus() {
 
 checkOnlineStatus();
 
-/*
-// reset the timeout for validating online
-function resetTimeoutOnline() {
-	console.log("Clearing timeout ID " + onlineTimeoutID);
-	
-	// timeout
-	var newExecution = Date.now() + onlineCheckTimeout;
-	console.log(Date.now() + " " + newExecution);
-	
-	// recall online validation with new timeout
-	browser.alarms.clear("checkOnlineStatus");
-	browser.alarms.create("checkOnlineStatus", {
-		when: newExecution
-	});
-}
-
-// reset intervals between online checks and call the method again
-function setOnlineTimerCheck(value) {
-	onlineCheckTimeout = value;
-	resetTimeoutOnline();
-}
-
-// reset intervals between online checks and call the method again
-function resetOnlineTimerCheck() {
-	onlineCheckTimeout = defaultOnlineCheckTimeout;
-	resetTimeoutOnline();
-}
-
-// reset the timeout for validating connectionInformation
-function resetTimeoutConnectionInformation() {
-	console.log("Clearing ConnectionInformation timeout ID " + connectionInformationTimeoutID);
-	
-	// timeout
-	var newExecution = Date.now() + connectionInformationCheckTimeout;
-	console.log(Date.now() + " " + newExecution);
-	
-	// recall online validation with new timeout
-	browser.alarms.clear("checkConnectionInformation");
-	browser.alarms.create("checkConnectionInformation", {
-		when: newExecution
-	});
-}
-
-
-// reset intervals between connection checks and call the method again
-function resetConnectionInformationTimerCheck() {
-	connectionInformationCheckTimeout = defaultConnectionInformationCheckTimeout;
-	resetTimeoutConnectionInformation();
-}
-*/
-
-// update badge depending on connection status
-
 
 
 /* communication with content script begin */
@@ -215,24 +162,5 @@ function showLoadingScreen(state) {
 	sendMessageToContentScript(message);
 }
 
-
-// process received messages from content script
-
-/*
-function processReceivedMessage(m) {
-	if (m.method == 'timer') {
-		resetOnlineTimerCheck();
-	}
-}
-*/
-
-
 browser.runtime.onConnect.addListener(connected);
 /* communication with content script end */
-
-
-// activate method to check if we are online
-//resetOnlineTimerCheck();
-
-// activate method to check connection information
-//resetConnectionInformationTimerCheck();

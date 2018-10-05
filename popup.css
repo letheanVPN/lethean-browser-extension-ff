@@ -1,21 +1,20 @@
 body {
-  padding: 0;
+  padding: 0px 0px 0px 0px;
   width: 140px;
   background-color: #000;
-  font-size: 10px;
-  padding-left: 10px;
-  padding-top: 10px;
+  line-height: 14px;
+  height: 250px;
 }
 
 .header {
   color: #ffffff;
   font: 10px Helvetica, sans-serif;
-  margin: -8px 0px 0px -5px;
+  margin: -8px 0px 0px -8px;
   background-image: url(images/bg.png);
   background-repeat: repeat;
   border: 1px solid #fff;
   text-align: left;
-  width: 138px;
+  width: 154px;
   line-height: 20px;
 }
 
@@ -25,8 +24,7 @@ body {
 
 fieldset{
   border: 0px;
-  width: 100%;
-  margin-left: -5px;
+  margin-left: -8px;
   padding: 0px;
   margin-top: 10px;
 }
@@ -111,29 +109,27 @@ section legend {
 }
 
 
-
-
-
 /* loading screen begin */
 #loadingScreen {
-	position: absolute;
-	z-index: 9999;
-	height: 100%;
-	width: 100%;
-	left: 0;
+  position: absolute;
+  z-index: 9999;
+  height: 100%;
+  width: 100%;
+  left: 0;
     top: 0;
     background-color: #000000;
-	color: #FFFFFF;
-	text-align: center;
+  color: #FFFFFF;
+  text-align: center;
 }
 
 #loadingScreen img {
-	display: block;
-	margin: auto;
-	margin-top: 50px;
+  display: block;
+  margin: auto;
+  margin-top: 50px;
 }
 
 #loadingScreen .title {
-	padding-top: 40px;
+  padding-top: 40px;
+  font: 10px Helvetica, sans-serif;
 }
 /* loading screen end */

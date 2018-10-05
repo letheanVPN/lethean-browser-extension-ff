@@ -390,34 +390,6 @@ function processReceivedMessage(m) {
 }
 
 
-/*
-// update badge depending on connection status
-function updateBadge(connected) {
-	var message = {method: "badge", parms: [ connected ]};
-	
-	if (myPort == null || myPort.disconnected) {
-		console.log("No Connection to background script");
-		pendingMessages.push(message);
-		return;
-	}
-	
-	myPort.postMessage(message);
-}
-
-
-// timer reset needs to be called in background script
-function resetOnlineTimerCheck() {
-	var message = {method: "timer", parms: [ ]};
-	
-	if (myPort == null || myPort.disconnected) {
-		console.log("No Connection to background script");
-		pendingMessages.push(message);
-		return;
-	}
-	
-	myPort.postMessage(message);
-}
-*/
 /* communication with background script END */
 
 
