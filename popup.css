@@ -4,11 +4,12 @@ body {
   background-color: #000;
   line-height: 14px;
   height: 250px;
+  font-family: "Segoe UI", Tahoma, sans-serif;
 }
 
 .header {
   color: #ffffff;
-  font: 10px Helvetica, sans-serif;
+  font-size: 10px;
   margin: -8px 0px 0px -8px;
   background-image: url(images/bg.png);
   background-repeat: repeat;
@@ -49,7 +50,7 @@ input[type="checkbox"] {
 }
 
 input[type="text"] {
-  width: 200px;
+  width: 155px;
   margin: 0 10px 0 0;
 }
 
@@ -81,7 +82,7 @@ section legend {
   background: rgba(0, 0, 0, 0.75);
   border-radius: 5px;
   color: #FFF;
-  font: 1.5em/1.2 Helvetica Neue, sans-serif;
+  font-size: 1.5em/1.2;
   transform: scale(0);
   transition: all 1.0s ease;
   z-index: 10;
@@ -130,6 +131,7 @@ section legend {
 
 #loadingScreen .title {
   padding-top: 40px;
-  font: 10px Helvetica, sans-serif;
+  font-size: 10px;
+  line-height: 15px;
 }
 /* loading screen end */
