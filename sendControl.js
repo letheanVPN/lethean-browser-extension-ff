@@ -114,6 +114,31 @@ function checkProxyStats() {
 	}, 1000);
 }
 
+// get the ip server to show in dashboard
+function getIp() {
+	var xmlhttp = new XMLHttpRequest();
+	xmlhttp.onreadystatechange = function() {
+		if (xmlhttp.readyState == 4) {
+			if (xmlhttp.status == 200) {
+				var response = JSON.parse(xmlhttp.responseText);
+				setServerIP(response.ip);
+			}
+		}
+	}
+
+	xmlhttp.open("GET", geoip_URL, true);
+	xmlhttp.setRequestHeader('Access-Control-Allow-Origin','*');
+	xmlhttp.setRequestHeader('Access-Control-Allow-Methods', '*');
+	xmlhttp.setRequestHeader('Access-Control-Allow-Headers', '*');
+	xmlhttp.send();
+
+	setTimeout(function() {
+		getIp();
+	}, 5000);
+}
+
+
+
 function csvToArray( strData, strDelimiter ){
   strDelimiter = (strDelimiter || ",");
   var objPattern = new RegExp(
@@ -320,7 +345,7 @@ document.getElementById("settingsConfig").addEventListener('click', function() {
 });
 
 
-// dashboard page updates - ip - received from background script
+// dashboard page updates - ip
 function setServerIP(ip) {
 	console.log("Setting server IP to " + ip);
 	document.getElementById('serverIP').innerHTML = ip;
@@ -351,9 +376,6 @@ var myPort = browser.runtime.connect({name:"port-from-cs"});
 // array of pending messages to be sent between background and content script
 var pendingMessages = [];
 
-console.log("myPort in content script");
-console.log(myPort);
-
 myPort.onMessage.addListener(function(m) {
   console.log("In content script, received message from background script: ");
   console.log(m);
@@ -367,11 +389,7 @@ myPort.onMessage.addListener(function(m) {
 
 // process messages sent by background script
 function processReceivedMessage(m) {
-	if (m.method == 'ip') {
-		console.log(m.parms + " my m param 0")
-		setServerIP(m.parms);
-	}
-	else if (m.method == 'stats') {
+	if (m.method == 'stats') {
 		document.getElementById("connectedMsg").innerText = "CONNECTION ERROR";
 		document.getElementById("tryAgainMsg").innerText = "TRY AGAIN";
 		document.getElementById("imgError").removeAttribute('hidden', 'hidden');
@@ -397,3 +415,4 @@ function processReceivedMessage(m) {
 showLoadingScreen(false);
 checkProxyStats();
 checkProxyProvider();
+getIp();
