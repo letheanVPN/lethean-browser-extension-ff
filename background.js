@@ -34,20 +34,8 @@ function checkOnlineStatus() {
 			if (xmlhttp.readyState == 4) {
 				if (xmlhttp.status == 200) {
 					var response = JSON.parse(xmlhttp.response);
-					console.log(response + " my response")
-					console.log(response.ip + " my IP response")
-					//setServerIP();
-					//updateBadge(true);
-					console.log("get IP")
-					//document.getElementById('serverIP').innerHTML = response.ip;
 					browser.browserAction.setBadgeText({ text: "O" });
 					browser.browserAction.setBadgeBackgroundColor({color: GREEN});
-
-					var message = {method: "ip", parms: response.ip};
-					sendMessageToContentScript(message);
-					
-					// increase interval for checks if last request was successfull and recursively call to the function
-					//setOnlineTimerCheck(6 * defaultOnlineCheckTimeout);
 				}
 				else if (xmlhttp.status == 0) {
 					console.log("getERROR")
