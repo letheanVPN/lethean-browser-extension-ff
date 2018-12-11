@@ -1,7 +1,7 @@
 {
-  "name": "Intense Coin",
+  "name": "Lethean Proxy/VPN Extension",
   "version": "1.0",
-  "description": "Intense Coin description",
+  "description": "Your gateway to the Lethean Proxy/VPN network, a secure and anonymous platform where users sell their bandwidth for cryptocurrency.",
   "browser_action": {
     "default_icon": "icon16.png",
     "default_popup": "popup.html",
@@ -31,6 +31,7 @@
     "webNavigation",
     "webRequest",
     "webRequestBlocking",
+    "alarms",
     "<all_urls>"
   ],
   "manifest_version": 2
