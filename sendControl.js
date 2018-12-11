@@ -12,7 +12,7 @@ var YELLOW = [255, 205, 0, 255];
 var connectionStatus = null;
 
 // url to get current IP address
-var geoip_URL = "https://geoip.nekudo.com/api/";
+var geoip_URL = "https://api.ipify.org/?format=json";
 // url to get transferred stats
 var haproxy_stats_URL = "/stats";
 // url to get provider and plan
