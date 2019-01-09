@@ -348,23 +348,23 @@ document.getElementById("settingsConfig").addEventListener('click', function() {
 // dashboard page updates - ip
 function setServerIP(ip) {
 	console.log("Setting server IP to " + ip);
-	document.getElementById('serverIP').innerHTML = ip;
+	document.getElementById('serverIP').innerText = ip;
 }
 
 // dashboard page updates - stats - received from background script
 function setProxyStats(onlineTime, transferredData) {
 	console.log("Setting Online time to " + onlineTime + " and transferred data to " + transferredData);
 	
-	document.getElementById('timeOnline').innerHTML = timer(onlineTime);
-	document.getElementById('dataTransferred').innerHTML = transferredData;
+	document.getElementById('timeOnline').innerText = timer(onlineTime);
+	document.getElementById('dataTransferred').innerText = transferredData;
 }
 
 // dashboard page updates - provider - received from background script
 function setProxyProvider(provider, service) {
 	console.log("Setting Provider to " + provider + " and serviceName to " + service);
 	
-	document.getElementById('providerName').innerHTML = provider;
-	document.getElementById('serviceName').innerHTML = service;
+	document.getElementById('providerName').innerText = provider;
+	document.getElementById('serviceName').innerText = service;
 }
 
 
