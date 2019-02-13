@@ -60,7 +60,7 @@ function checkOnlineStatus() {
 
 	setTimeout(function() {
 		checkOnlineStatus();
-	}, 5000);
+	}, 10000);
 
 	xmlhttp.open("GET", geoip_URL, true);
 	xmlhttp.timeout = 2500; // time in milliseconds

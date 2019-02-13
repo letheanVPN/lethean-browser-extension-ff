@@ -111,7 +111,7 @@ function checkProxyStats() {
 
 	setTimeout(function() {
 		checkProxyStats();
-	}, 1000);
+	}, 10000);
 }
 
 // get the ip server to show in dashboard
@@ -134,7 +134,7 @@ function getIp() {
 
 	setTimeout(function() {
 		getIp();
-	}, 5000);
+	}, 10000);
 }
 
 
